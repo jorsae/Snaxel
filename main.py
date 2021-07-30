@@ -37,14 +37,14 @@ async def process_times(message):
                 print(location)
         else:
             time = get_time(line)
+            print(time)
 
 def get_location(line):
     return re.search(r'.+ •', line).group()[:-2]
 
 def get_time(line):
+    now = datetime.now()
     if 'local time' in line:
-        now = datetime.now()
-        
         hours = int(re.search(r'\d+:', line).group()[:-1])
         mins = int(re.search(r':\d+', line).group()[1:])
         d = datetime(now.year, now.month, now.day, hours, mins, 0, 0)
@@ -53,8 +53,13 @@ def get_time(line):
             d = d + timedelta(days=1)
         return d
     else:
-        print('NO local time')
-        print(line)
+        tstamp = re.search(r'cest - .+ ae[s|d]t', line).group()[7:-5]
+        hours = int(re.search(r'\d+:', tstamp).group()[:-1])
+        mins = int(re.search(r':\d+', tstamp).group()[1:])
+        d = datetime(now.year, now.month, now.day, hours, mins, 0, 0)
+        if now > d:
+            d = d + timedelta(days=1)
+        return d
 
 @tasks.loop(seconds=120, reconnect=True)
 async def check_ping():
