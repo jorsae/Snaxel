@@ -26,30 +26,43 @@ async def on_message(message: discord.Message):
         .replace("‘", "′")
         .replace("’", "′")
     )
+    if message.author.id == 870640000935526470:
+        return
 
     await bot.process_commands(message)
     
-    mvps = await process_times(message)
-    m = ''
-    for mvp in mvps:
-        m += f'{str(mvp)}\n'
-        settings.mvps.append(mvp)
-    await message.channel.send(m)
+    if message.channel.id == settings.mvp_channel:
+        if message.author.id in settings.admin:
+            mvps = await process_times(message)
+            if mvps is None:
+                await message.channel.send("Can't add mvp timess")
+                return
+    
+            m = ''
+            for mvp in mvps:
+                m += f'{str(mvp)}\n'
+                settings.mvps.append(mvp)
+            await message.channel.send(m)
 
 async def process_times(message):
-    content = message.content.lower()
-    MVPS = []
-    location = ''
-    for line in content.split('\n'):
-        if line.startswith('ch'):
-            loc = get_location(line)
-            if loc is not None:
-                location = loc
-        else:
-            time = get_time(line)
-            if location is not None:
-                MVPS.append(MVP(location, time))
-    return MVPS
+    # I know this is bad practice
+    try:
+        content = message.content.lower()
+        MVPS = []
+        location = ''
+        for line in content.split('\n'):
+            if line.startswith('ch'):
+                loc = get_location(line)
+                if loc is not None:
+                    location = loc
+            else:
+                time = get_time(line)
+                if location is not None:
+                    MVPS.append(MVP(location, time))
+        return MVPS
+    except Exception as e:
+        logging.error(e)
+        return None
 
 def get_location(line):
     return re.search(r'.+ •', line).group()[:-2]
