@@ -1,0 +1,1 @@
+WARNING_TIME = 300

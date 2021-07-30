@@ -2,10 +2,11 @@ import discord
 import os
 import re
 import logging
-import string
 from datetime import datetime, timedelta
 from discord.ext import commands as discord_commands
 from discord.ext import tasks
+
+import constants
 from settings import Settings
 from mvp import MVP
 
@@ -30,6 +31,7 @@ async def on_message(message: discord.Message):
     m = ''
     for mvp in mvps:
         m += f'{str(mvp)}\n'
+        settings.mvps.append(mvp)
     await message.channel.send(m)
 
 async def process_times(message):
@@ -71,7 +73,13 @@ def get_time(line):
 
 @tasks.loop(seconds=10, reconnect=True)
 async def check_ping():
-    pass # TODO: Do stuff
+    now = datetime.now()
+    for mvp in settings.mvps:
+        total = (now - mvp.dt).total_seconds()
+        if total <= constants.WARNING_TIME:
+            ch = bot.get_channel(settings.ping_channel)
+            await ch.send(f'ping time yo: {len(settings.mvps)}')
+            settings.mvps.remove(mvp)
 
 @bot.event
 async def on_ready():
