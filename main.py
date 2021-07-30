@@ -7,6 +7,7 @@ from discord.ext import commands as discord_commands
 from discord.ext import tasks
 
 import constants
+import cogs
 from settings import Settings
 from mvp import MVP
 
@@ -26,8 +27,9 @@ async def on_message(message: discord.Message):
         .replace("’", "′")
     )
 
-    mvps = await process_times(message)
+    await bot.process_commands(message)
     
+    mvps = await process_times(message)
     m = ''
     for mvp in mvps:
         m += f'{str(mvp)}\n'
@@ -97,6 +99,7 @@ if __name__ == '__main__':
     setup_logging()
     settings.parse_settings()
     print('running')
-    print(settings.token)
+
+    bot.add_cog(cogs.General(bot, settings))
 
     bot.run(settings.token)

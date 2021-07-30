@@ -6,6 +6,8 @@ class Settings():
         self.settings_file = settings_file
         self.token = None
         self.ping_channel = None
+        self.mvp_channel = None
+        self.admin = []
         self.mvps = []
     
     def parse_settings(self):
@@ -13,6 +15,8 @@ class Settings():
             with open(self.settings_file, 'r') as f:
                 data = json.loads(f.read())
             self.token = data.get("token")
+            self.admin = data.get("admin")
+            self.mvp_channel = int(data.get("mvp_channel"))
             self.ping_channel = int(data.get("ping_channel"))
             return True
         except Exception as e:
