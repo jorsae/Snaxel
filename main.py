@@ -29,15 +29,14 @@ async def on_message(message: discord.Message):
 
 async def process_times(message):
     content = message.content.lower()
-    print(content)
     location = ''
     for line in content.split('\n'):
-        loc = get_place(line)
+        loc = get_location(line)
         if loc is not None:
             location = loc
         
 
-def get_place(line):
+def get_location(line):
     if line.startswith('ch'):
         return re.search(r'.+ •', line).group()[:-2]
     else:
