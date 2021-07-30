@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 from discord.ext import commands as discord_commands
 from discord.ext import tasks
 from settings import Settings
+from mvp import MVP
 
 settings = Settings('settings.json')
 
@@ -24,20 +25,27 @@ async def on_message(message: discord.Message):
         .replace("’", "′")
     )
 
-    await process_times(message)
+    mvps = await process_times(message)
+    
+    m = ''
+    for mvp in mvps:
+        m += f'{str(mvp)}\n'
+    await message.channel.send(m)
 
 async def process_times(message):
     content = message.content.lower()
+    MVPS = []
     location = ''
     for line in content.split('\n'):
         if line.startswith('ch'):
             loc = get_location(line)
             if loc is not None:
                 location = loc
-                print(location)
         else:
             time = get_time(line)
-            print(time)
+            if location is not None:
+                MVPS.append(MVP(location, time))
+    return MVPS
 
 def get_location(line):
     return re.search(r'.+ •', line).group()[:-2]
@@ -61,7 +69,7 @@ def get_time(line):
             d = d + timedelta(days=1)
         return d
 
-@tasks.loop(seconds=120, reconnect=True)
+@tasks.loop(seconds=10, reconnect=True)
 async def check_ping():
     pass # TODO: Do stuff
 
