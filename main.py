@@ -2,6 +2,7 @@ import discord
 import os
 import re
 import logging
+import string
 from discord.ext import commands as discord_commands
 from discord.ext import tasks
 from settings import Settings
@@ -27,13 +28,24 @@ async def on_message(message: discord.Message):
     await process_times(message)
 
 async def process_times(message):
-    pass
-    # TODO: Do stuff
+    content = message.content.lower()
+    print(content)
+    location = ''
+    for line in content.split('\n'):
+        loc = get_place(line)
+        if loc is not None:
+            location = loc
+        
+
+def get_place(line):
+    if line.startswith('ch'):
+        return re.search(r'.+ •', line).group()[:-2]
+    else:
+        return None
 
 @tasks.loop(seconds=120, reconnect=True)
 async def check_ping():
-    pass
-    # TODO: Do stuff
+    pass # TODO: Do stuff
 
 @bot.event
 async def on_ready():
