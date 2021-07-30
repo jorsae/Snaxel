@@ -3,13 +3,12 @@ import os
 import re
 import logging
 import string
+from datetime import datetime, timedelta
 from discord.ext import commands as discord_commands
 from discord.ext import tasks
 from settings import Settings
 
 settings = Settings('settings.json')
-intents = discord.Intents.default()
-intents.members = True
 
 bot = discord_commands.Bot(command_prefix='.')
 bot.remove_command('help')
@@ -31,16 +30,31 @@ async def process_times(message):
     content = message.content.lower()
     location = ''
     for line in content.split('\n'):
-        loc = get_location(line)
-        if loc is not None:
-            location = loc
-        
+        if line.startswith('ch'):
+            loc = get_location(line)
+            if loc is not None:
+                location = loc
+                print(location)
+        else:
+            time = get_time(line)
 
 def get_location(line):
-    if line.startswith('ch'):
-        return re.search(r'.+ •', line).group()[:-2]
+    return re.search(r'.+ •', line).group()[:-2]
+
+def get_time(line):
+    if 'local time' in line:
+        now = datetime.now()
+        
+        hours = int(re.search(r'\d+:', line).group()[:-1])
+        mins = int(re.search(r':\d+', line).group()[1:])
+        d = datetime(now.year, now.month, now.day, hours, mins, 0, 0)
+
+        if now > d:
+            d = d + timedelta(days=1)
+        return d
     else:
-        return None
+        print('NO local time')
+        print(line)
 
 @tasks.loop(seconds=120, reconnect=True)
 async def check_ping():
