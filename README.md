@@ -1,0 +1,1 @@
+this bot was quickly made, the codebase is horrible
