@@ -90,7 +90,7 @@ def get_time(line):
 async def check_ping():
     now = datetime.now()
     for mvp in settings.mvps:
-        total = (now - mvp.dt).total_seconds()
+        total = (mvp.dt - now).total_seconds()
         if total <= constants.WARNING_TIME:
             ch = bot.get_channel(settings.ping_channel)
             await ch.send(f'ping time yo: {len(settings.mvps)}')
@@ -114,5 +114,6 @@ if __name__ == '__main__':
     print('running')
 
     bot.add_cog(cogs.General(bot, settings))
+    bot.add_cog(cogs.Admin(bot, settings))
 
     bot.run(settings.token)

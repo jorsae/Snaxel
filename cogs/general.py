@@ -14,8 +14,16 @@ class General(commands.Cog):
     @commands.command(name='mvp', help=f'mvp list')
     async def mvp(self, ctx):
         out = ''
-        for mvp in self.settings.mvp:
-            out += str(mvp)
+        index = 0
+
+        if len(self.settings.mvps) <= 0:
+            await ctx.send('No times')
+            return
+        
+        for mvp in self.settings.mvps:
+            index += 1
+            out += f'{index}. {str(mvp)}\n'
+        
         await ctx.send(out)
 
     @commands.command(name='ping', help="Checks the bot's latency")

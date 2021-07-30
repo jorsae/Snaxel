@@ -1,5 +1,6 @@
-import logging
 import json
+import logging
+import constants
 
 class Settings():
     def __init__(self, settings_file):
@@ -16,8 +17,11 @@ class Settings():
                 data = json.loads(f.read())
             self.token = data.get("token")
             self.admin = data.get("admin")
+            constants.ADMIN_LIST = self.admin
+            
             self.mvp_channel = int(data.get("mvp_channel"))
             self.ping_channel = int(data.get("ping_channel"))
+            
             return True
         except Exception as e:
             logging.critical(f'Failed to parse_settings: {e}')
