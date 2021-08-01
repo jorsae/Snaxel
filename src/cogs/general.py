@@ -7,6 +7,7 @@ import time
 import logging
 
 import constants
+import utility
 
 class General(commands.Cog):
     def __init__(self, bot, settings):
@@ -44,15 +45,5 @@ class General(commands.Cog):
         for cog in cogs:
             for command in cog.walk_commands():
                 if await command.can_run(ctx):
-                    embed.add_field(name=f'.{command}{self.get_aliases(command.aliases)}', value=command.help, inline=False)
+                    embed.add_field(name=f'.{command}{utility.get_aliases(command.aliases)}', value=command.help, inline=False)
         await ctx.send(embed=embed)
-    
-    def get_aliases(self, aliases):
-        if aliases == []:
-            return ''
-        else:
-            output = ' | ('
-            for alias in aliases:
-                output += f'{alias}, '
-            output = output[:-2]
-            return f'{output})'

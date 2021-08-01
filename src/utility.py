@@ -15,3 +15,14 @@ def format_timedelta(tdelta):
         return f'{days} {dayPlural}, {hours}:{minutes}:{seconds}'
     else:
         return f'{hours}:{minutes}:{seconds}'
+
+# Get aliases for a command
+def get_aliases(aliases):
+    if aliases == []:
+        return ''
+    else:
+        output = ' | ('
+        for alias in aliases:
+            output += f'{alias}, '
+        output = output[:-2]
+        return f'{output})'
