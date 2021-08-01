@@ -38,14 +38,23 @@ class General(commands.Cog):
         author = ctx.message.author
         
         cogs = []
-        # cogs.append(self.bot.get_cog('Ranking'))
         cogs.append(self.bot.get_cog('General'))
-        # cogs.append(self.bot.get_cog('Admin'))
+        cogs.append(self.bot.get_cog('Admin'))
 
-        embed = discord.Embed(colour=constants.COLOUR_NEUTRAL)
-        embed.set_author(name=f'BMW Help')
+        embed = discord.Embed()
+        embed.set_author(name=f'Help')
         for cog in cogs:
             for command in cog.walk_commands():
                 if await command.can_run(ctx):
-                    embed.add_field(name=f'{self.settings.prefix}{command}{utility.get_aliases(command.aliases)}', value=command.help, inline=False)
+                    embed.add_field(name=f'.{command}{self.get_aliases(command.aliases)}', value=command.help, inline=False)
         await ctx.send(embed=embed)
+    
+    def get_aliases(self, aliases):
+        if aliases == []:
+            return ''
+        else:
+            output = ' | ('
+            for alias in aliases:
+                output += f'{alias}, '
+            output = output[:-2]
+            return f'{output})'
