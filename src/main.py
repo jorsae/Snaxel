@@ -35,8 +35,8 @@ async def on_message(message: discord.Message):
     if message.channel.id == settings.mvp_channel:
         if message.author.id in settings.admin:
             mvps = await process_times(message)
-            if mvps is None:
-                await message.channel.send("Can't add mvp timess")
+            if len(mvps) <= 0:
+                await message.channel.send("No MVP times added")
                 return
     
             m = ''
@@ -46,40 +46,43 @@ async def on_message(message: discord.Message):
             await message.channel.send(m)
 
 async def process_times(message):
-    # I know this is bad practice
-    try:
-        content = message.content.lower()
-        MVPS = []
-        location = ''
-        for line in content.split('\n'):
-            if line.startswith('ch'):
-                loc = get_location(line)
-                if loc is not None:
-                    location = loc
-            else:
-                time = get_time(line)
-                if location is not None:
-                    MVPS.append(MVP(location, time))
-        return MVPS
-    except Exception as e:
-        logging.error(e)
-        return None
+    content = message.content.lower()
+    MVPS = []
+    location = None
+    for line in content.split('\n'):
+        if line.startswith('ch'):
+            loc = get_location(line)
+            if loc is not None:
+                location = loc
+        else:
+            time = get_time(line)
+            if location is not None and time is not None:
+                MVPS.append(MVP(location, time))
+    return MVPS
 
 def get_location(line):
-    return re.search(r'.+ •', line).group()[:-2]
+    try:
+        return re.search(r'.+ •', line).group()[:-2]
+    except Exception as e:
+        logging.warning(e)
+        return None
 
 def get_time(line):
-    now = datetime.now()
-    if 'local time' not in line:
-        line = re.search(r'cest - .+ ae[s|d]t', line).group()[7:-5]
-        
-    hours = int(re.search(r'\d+:', line).group()[:-1])
-    mins = int(re.search(r':\d+', line).group()[1:])
-    d = datetime(now.year, now.month, now.day, hours, mins, 0, 0)
+    try:
+        now = datetime.now()
+        if 'local time' not in line:
+            line = re.search(r'cest - .+ ae[s|d]t', line).group()[7:-5]
+            
+        hours = int(re.search(r'\d+:', line).group()[:-1])
+        mins = int(re.search(r':\d+', line).group()[1:])
+        d = datetime(now.year, now.month, now.day, hours, mins, 0, 0)
 
-    if now > d:
-        d = d + timedelta(days=1)
-    return d
+        if now > d:
+            d = d + timedelta(days=1)
+        return d
+    except Exception as e:
+        logging.warning(e)
+        return None
 
 @tasks.loop(seconds=10, reconnect=True)
 async def check_ping():
