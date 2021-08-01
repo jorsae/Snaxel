@@ -18,7 +18,6 @@ class Admin(commands.Cog):
     @commands.command(name='delmvp', help=f'Delete mvp time')
     @is_admin()
     async def del_mvp(self, ctx, index: int):
-        # print(f'del_mvp: {index} | {len(self.settings.mvps)}')
         count = 0
         for mvp in self.settings.mvps:
             count += 1

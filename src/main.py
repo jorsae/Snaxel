@@ -37,17 +37,20 @@ async def on_message(message: discord.Message):
             mvps = await process_times(message)
             if len(mvps) <= 0:
                 await message.channel.send("No MVP times added")
+                logging.warning(f'[{message.author}]No MVP times added: {message.content}')
                 return
     
             m = ''
             for mvp in mvps:
                 m += f'{str(mvp)}\n'
                 settings.mvps.append(mvp)
+            
+            logging.info(f'[{message.author}] MVP times added: {len(mvps)}/{len(settings.mvps)}')
             await message.channel.send(m)
 
 async def process_times(message):
     content = message.content.lower()
-    MVPS = []
+    mvps = []
     location = None
     for line in content.split('\n'):
         if line.startswith('ch'):
@@ -57,14 +60,14 @@ async def process_times(message):
         else:
             time = get_time(line)
             if location is not None and time is not None:
-                MVPS.append(MVP(location, time))
-    return MVPS
+                mvps.append(MVP(location, time))
+    return mvps
 
 def get_location(line):
     try:
         return re.search(r'.+ •', line).group()[:-2]
     except Exception as e:
-        logging.warning(e)
+        logging.error(e)
         return None
 
 def get_time(line):
@@ -81,7 +84,7 @@ def get_time(line):
             d = d + timedelta(days=1)
         return d
     except Exception as e:
-        logging.warning(e)
+        logging.error(e)
         return None
 
 @tasks.loop(seconds=10, reconnect=True)
