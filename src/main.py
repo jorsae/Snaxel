@@ -7,6 +7,7 @@ from discord.ext import commands as discord_commands
 from discord.ext import tasks
 
 import constants
+import utility
 import cogs
 from settings import Settings
 from mvp import MVP
@@ -26,7 +27,7 @@ async def on_message(message: discord.Message):
         .replace("‘", "′")
         .replace("’", "′")
     )
-    if message.author.id == 870640000935526470:
+    if message.author.id == settings.bot_id:
         return
 
     await bot.process_commands(message)
@@ -93,7 +94,8 @@ async def check_ping():
         total = (mvp.dt - now).total_seconds()
         if total <= constants.WARNING_TIME:
             ch = bot.get_channel(settings.ping_channel)
-            await ch.send(f'mvp in 5min: {mvp.location}')
+            time_left = mvp.dt - now
+            await ch.send(f'mvp in {utility.format_timedelta(time_left)}: {mvp.location}')
             settings.mvps.remove(mvp)
 
 @bot.event

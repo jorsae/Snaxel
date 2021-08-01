@@ -6,6 +6,7 @@ class Settings():
     def __init__(self, settings_file):
         self.settings_file = settings_file
         self.token = None
+        self.bot_id = None
         self.ping_channel = None
         self.mvp_channel = None
         self.admin = []
@@ -17,6 +18,7 @@ class Settings():
                 data = json.loads(f.read())
             self.token = data.get("token")
             self.admin = data.get("admin")
+            self.bot_id = int(data.get("bot_id"))
             constants.ADMIN_LIST = self.admin
             
             self.mvp_channel = int(data.get("mvp_channel"))
