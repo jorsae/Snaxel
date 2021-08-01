@@ -11,7 +11,7 @@ import cogs
 from settings import Settings
 from mvp import MVP
 
-settings = Settings('settings.json')
+settings = Settings('../settings.json')
 
 bot = discord_commands.Bot(command_prefix='.')
 bot.remove_command('help')
@@ -93,7 +93,7 @@ async def check_ping():
         total = (mvp.dt - now).total_seconds()
         if total <= constants.WARNING_TIME:
             ch = bot.get_channel(settings.ping_channel)
-            await ch.send(f'ping time yo: {len(settings.mvps)}')
+            await ch.send(f'{constants.PING_ROLE} {mvp.location}')
             settings.mvps.remove(mvp)
 
 @bot.event
@@ -101,7 +101,7 @@ async def on_ready():
     check_ping.start()
 
 def setup_logging():
-    logFolder = 'logs'
+    logFolder = '../logs'
     logFile = 'snaxel.log'
     if not os.path.isdir(logFolder):
         os.makedirs(logFolder)
