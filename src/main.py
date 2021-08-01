@@ -26,7 +26,8 @@ async def on_message(message: discord.Message):
         .replace("‘", "′")
         .replace("’", "′")
     )
-    if message.author.id == 870640000935526470:
+    if message.author.id == 142270550192947200:
+        print(message.content)
         return
 
     await bot.process_commands(message)
