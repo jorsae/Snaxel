@@ -93,7 +93,7 @@ async def check_ping():
         total = (mvp.dt - now).total_seconds()
         if total <= constants.WARNING_TIME:
             ch = bot.get_channel(settings.ping_channel)
-            await ch.send(f'{constants.PING_ROLE} in 5min: {mvp.location}')
+            await ch.send(f'mvp in 5min: {mvp.location}')
             settings.mvps.remove(mvp)
 
 @bot.event
