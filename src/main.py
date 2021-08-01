@@ -70,22 +70,16 @@ def get_location(line):
 
 def get_time(line):
     now = datetime.now()
-    if 'local time' in line:
-        hours = int(re.search(r'\d+:', line).group()[:-1])
-        mins = int(re.search(r':\d+', line).group()[1:])
-        d = datetime(now.year, now.month, now.day, hours, mins, 0, 0)
+    if 'local time' not in line:
+        line = re.search(r'cest - .+ ae[s|d]t', line).group()[7:-5]
+        
+    hours = int(re.search(r'\d+:', line).group()[:-1])
+    mins = int(re.search(r':\d+', line).group()[1:])
+    d = datetime(now.year, now.month, now.day, hours, mins, 0, 0)
 
-        if now > d:
-            d = d + timedelta(days=1)
-        return d
-    else:
-        tstamp = re.search(r'cest - .+ ae[s|d]t', line).group()[7:-5]
-        hours = int(re.search(r'\d+:', tstamp).group()[:-1])
-        mins = int(re.search(r':\d+', tstamp).group()[1:])
-        d = datetime(now.year, now.month, now.day, hours, mins, 0, 0)
-        if now > d:
-            d = d + timedelta(days=1)
-        return d
+    if now > d:
+        d = d + timedelta(days=1)
+    return d
 
 @tasks.loop(seconds=10, reconnect=True)
 async def check_ping():
