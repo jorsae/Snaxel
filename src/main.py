@@ -75,9 +75,11 @@ def get_time(line):
         now = datetime.now()
         if 'local time' not in line:
             line = re.search(r'cest - .+ ae[s|d]t', line).group()[7:-5]
-            
+        
         hours = int(re.search(r'\d+:', line).group()[:-1])
         mins = int(re.search(r':\d+', line).group()[1:])
+        if 'pm' in line:
+            hours += 12
         d = datetime(now.year, now.month, now.day, hours, mins, 0, 0)
 
         if now > d:
