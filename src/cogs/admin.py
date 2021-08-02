@@ -1,7 +1,7 @@
 import discord
 import logging
 from datetime import datetime, date, timedelta
-from discord.ext import commands, flags
+from discord.ext import commands
 
 import constants
 
