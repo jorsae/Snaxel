@@ -81,6 +81,7 @@ def get_time(line):
         if 'pm' in line:
             hours += 12
         d = datetime(now.year, now.month, now.day, hours, mins, 0, 0)
+        d = d - timedelta(hours=10)
 
         if now > d:
             d = d + timedelta(days=1)
