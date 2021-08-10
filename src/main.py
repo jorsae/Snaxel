@@ -79,7 +79,9 @@ def get_time(line):
         hours = int(re.search(r'\d+:', line).group()[:-1])
         mins = int(re.search(r':\d+', line).group()[1:])
         if 'pm' in line:
-            hours += 12
+            if hours != 12:
+                hours += 12
+        
         hours = hours % 24
         d = datetime(now.year, now.month, now.day, hours, mins, 0, 0)
         d = d - timedelta(hours=10)
