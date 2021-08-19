@@ -81,6 +81,9 @@ def get_time(line):
         if 'pm' in line:
             if hours != 12:
                 hours += 12
+        else:
+            if hours == 12:
+                hours += 12
         
         hours = hours % 24
         d = datetime(now.year, now.month, now.day, hours, mins, 0, 0)
