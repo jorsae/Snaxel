@@ -11,6 +11,8 @@ class Settings():
         self.mvp_channel = None
         self.admin = []
         self.mvps = []
+        self.local_time_offset = None
+        self.aest_offset = None
     
     def parse_settings(self):
         try:
@@ -23,6 +25,9 @@ class Settings():
             
             self.mvp_channel = int(data.get("mvp_channel"))
             self.ping_channel = int(data.get("ping_channel"))
+
+            self.local_time_offset = int(data.get("local_time_offset"))
+            self.aest_offset = int(data.get("aest_offset"))
             
             return True
         except Exception as e:

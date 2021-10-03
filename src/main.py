@@ -87,7 +87,11 @@ def get_time(line):
         
         hours = hours % 24
         d = datetime(now.year, now.month, now.day, hours, mins, 0, 0)
-        d = d - timedelta(hours=10)
+        
+        if 'local time' in line:
+            d = d - timedelta(hours=settings.local_time_offset)
+        else:
+            d = d - timedelta(hours=settings.aest_offset)
 
         if now > d:
             d = d + timedelta(days=1)
@@ -122,7 +126,6 @@ def setup_logging():
 if __name__ == '__main__':
     setup_logging()
     settings.parse_settings()
-    print('running')
 
     bot.add_cog(cogs.General(bot, settings))
     bot.add_cog(cogs.Admin(bot, settings))
